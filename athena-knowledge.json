@@ -1,0 +1,140 @@
+[
+  {
+    "id": "official-2026-08-17-student-update",
+    "title": "FJU Student Update \u2014 Week 2, Week 3, roster and homework submission",
+    "source_type": "official_fju",
+    "authority": 100,
+    "date": "2026-08-17",
+    "valid_until": null,
+    "audience": "all students",
+    "keywords": [
+      "week 2",
+      "week 3",
+      "unlocked",
+      "roster",
+      "zoom",
+      "homework",
+      "submission",
+      "submit",
+      "bug"
+    ],
+    "content": "FJU announced that Week 2 and Week 3 should now be unlocked. This week's Zoom sessions were corrected in the roster. The Zoom meeting name may differ slightly from the roster; if the date and time are correct, it is the correct session. FJU also confirmed that the homework submission page has not yet been fixed and they are working on it."
+  },
+  {
+    "id": "course-week3-minimum-viable-presence",
+    "title": "Week 3 \u2014 Minimum Viable Presence",
+    "source_type": "course_material",
+    "authority": 90,
+    "date": "2026-08-17",
+    "valid_until": null,
+    "audience": "week 3",
+    "keywords": [
+      "week 3",
+      "business identity",
+      "minimum viable presence",
+      "facebook",
+      "instagram",
+      "whatsapp",
+      "email",
+      "logo",
+      "i help"
+    ],
+    "content": "Week 3 focuses on minimum viable presence. The lesson asks students to write three versions of an 'I help [audience] get [result] without [pain]' statement and choose the best. Minimum viable presence includes a business name, simple logo and 2\u20133 colours, Facebook Business Page, Instagram Business Profile, Facebook and Instagram connected, business WhatsApp, professional business email and a password manager."
+  },
+  {
+    "id": "course-week3-book-mindset",
+    "title": "Week 3 \u2014 Book Study + Mindset",
+    "source_type": "course_material",
+    "authority": 90,
+    "date": "2026-08-17",
+    "valid_until": null,
+    "audience": "week 3",
+    "keywords": [
+      "week 3",
+      "book",
+      "$100m offers",
+      "chapters 6",
+      "chapter 7",
+      "chapter 8",
+      "starving crowd",
+      "mindset",
+      "identity shift",
+      "200 words"
+    ],
+    "content": "Week 3 reading is $100M Offers chapters 6\u20138, including the 'starving crowd', three starving markets for your solution, and market before product. For each chapter answer: key principle, how it applies to your business, and one action you will take. The mindset exercise requires 200+ words on the difference between a business owner and someone 'trying to start', plus which owner behaviour you will adopt this week."
+  },
+  {
+    "id": "lecture-2026-08-17-validation",
+    "title": "Offer Drafting & Customer Validation \u2014 key framework",
+    "source_type": "lecture_notes",
+    "authority": 80,
+    "date": "2026-08-17",
+    "valid_until": null,
+    "audience": "students",
+    "keywords": [
+      "testing",
+      "validation",
+      "hypothesis",
+      "customer",
+      "pain",
+      "outcome",
+      "credibility",
+      "action",
+      "evidence",
+      "courtesy",
+      "commitment"
+    ],
+    "content": "The validation session stressed that a well-designed offer is still a hypothesis until customers respond. Test customer, pain, outcome, credibility and action assumptions. Use the sequence Hypothesis \u2192 Rehearsal \u2192 Conversation \u2192 Evidence \u2192 Decision, then keep, change, narrow or stop. Courtesy such as compliments is weak evidence; behaviour and commitment are stronger evidence. AI can improve the test but does not validate the market."
+  },
+  {
+    "id": "student-2026-08-17-eugene",
+    "title": "Student reports \u2014 Eugene AI unavailable",
+    "source_type": "student_whatsapp",
+    "authority": 35,
+    "date": "2026-08-17",
+    "valid_until": "2026-08-18",
+    "audience": "students",
+    "keywords": [
+      "eugene",
+      "eugene ai",
+      "not working",
+      "down",
+      "unavailable"
+    ],
+    "content": "Multiple students in the Students Helping Students WhatsApp group reported on the morning of 17 August that Eugene AI was not working and showed 'unavailable at the moment'. This is a student report, not an official FJU status notice."
+  },
+  {
+    "id": "student-week2-ubuntu",
+    "title": "Student discussion \u2014 Week 2 Ubuntu confusion",
+    "source_type": "student_whatsapp",
+    "authority": 30,
+    "date": "2026-08-16",
+    "valid_until": null,
+    "audience": "week 2",
+    "keywords": [
+      "ubuntu",
+      "week 2",
+      "case study",
+      "homework",
+      "own business"
+    ],
+    "content": "Students discussed confusion about whether Week 2 work should use Ubuntu or their own businesses. Several students reported that the Week 2 case study work was being done on Ubuntu and that the old pinned-post/comment submission route was difficult or inconsistent. Treat this as student discussion rather than official instruction; where it conflicts with newer official FJU guidance, use the official guidance."
+  },
+  {
+    "id": "student-transcripts",
+    "title": "Student tip \u2014 Zoom transcripts",
+    "source_type": "student_whatsapp",
+    "authority": 30,
+    "date": "2026-08-14",
+    "valid_until": null,
+    "audience": "students",
+    "keywords": [
+      "transcript",
+      "zoom",
+      "recording",
+      "chatgpt",
+      "notes"
+    ],
+    "content": "Students shared a practical method of using Zoom transcripts or notes and then pasting the transcript into ChatGPT to summarize the session and identify homework. Availability depends on the meeting and recording settings."
+  }
+]
