@@ -53,18 +53,18 @@ app.post('/api/athena/knowledge', admin, (req,res)=>{
 app.post('/api/athena/draft-from-chat', admin, async (req,res)=>{
   try{
     const raw = String(req.body?.text||'').slice(0, 60000);
-    if(!raw.trim()) return res.status(400).json({error:'Paste or upload the exported chat text first.'});
-    const prompt = `You are helping an FJU course admin turn a raw WhatsApp group chat export into a small number of short, useful knowledge base entries for other students.
+    if(!raw.trim()) return res.status(400).json({error:'Paste or upload some text first.'});
+    const prompt = `You are helping an FJU course admin turn pasted text (a WhatsApp chat export, a quick note, or an announcement) into a small number of short, useful knowledge base entries for other students.
 
 Rules:
-- Only include information that is genuinely useful for other students (deadlines, platform issues, clarifications, tips). Ignore greetings, small talk, and anything not useful.
+- Only include information that is genuinely useful for other students (deadlines, platform issues, clarifications, tips, announcements). Ignore greetings, small talk, and anything not useful.
 - Never include any student's name, phone number, or other personal identifying detail in the output. Refer to people generically ("a student", "several students") if needed.
-- Merge duplicate or related messages about the same topic into one entry.
-- For each entry produce: title (short), date (YYYY-MM-DD, your best guess from the chat, or the most recent relevant date mentioned), keywords (3-8 short lowercase terms), content (2-4 plain-English sentences, no names or numbers).
+- Merge duplicate or related points about the same topic into one entry.
+- For each entry produce: title (short), date (YYYY-MM-DD, your best guess from the text, or the most recent relevant date mentioned), keywords (3-8 short lowercase terms), content (2-4 plain-English sentences, no names or numbers).
 - Return STRICT JSON only: an array of objects with exactly these fields: title, date, keywords (array of strings), content. No other text, no markdown code fences.
 - If there is nothing useful in the text, return [].
 
-CHAT EXPORT:
+PASTED TEXT:
 ${raw}`;
     const response = await client.responses.create({ model: MODEL, input: prompt });
     let text = (response.output_text || '').trim();
