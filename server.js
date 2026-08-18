@@ -20,10 +20,21 @@ function loadEsc(){ try{return JSON.parse(fs.readFileSync(ESCALATIONS_PATH,'utf8
 function saveEsc(items){ fs.mkdirSync(path.dirname(ESCALATIONS_PATH),{recursive:true}); fs.writeFileSync(ESCALATIONS_PATH, JSON.stringify(items,null,2)); }
 
 function tokens(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9$]+/g,' ').split(/\s+/).filter(x=>x.length>1); }
+const RECENCY_WINDOW_DAYS = 60; // a post decays to zero recency bonus over ~2 months
+const RECENCY_MAX_BONUS = 0.6;  // a real nudge, but smaller than any single keyword match (1 point each)
 function score(item, question){
   const q=new Set(tokens(question)); let s=0;
   for(const t of tokens(item.title+' '+(item.keywords||[]).join(' ')+' '+item.content)){ if(q.has(t)) s+=1; }
   s += (item.authority||0)/100;
+  // Newer posts on the same topic rank higher automatically, so staff don't have
+  // to remember to explicitly mark an old entry superseded just to keep answers
+  // current. This is a soft nudge (relevance/authority still dominate) — for a
+  // hard correction, still use "This replaces" so the old entry is unambiguously
+  // retired rather than just outranked.
+  if(item.date){
+    const days = (Date.now() - new Date(item.date).getTime()) / 86400000;
+    if(isFinite(days) && days >= 0) s += Math.max(0, 1 - days/RECENCY_WINDOW_DAYS) * RECENCY_MAX_BONUS;
+  }
   if(item.valid_until && new Date(item.valid_until) < new Date()) s -= 3;
   // Superseded guidance can still be relevant as historical context, but should
   // rank well below current information for the same topic.
