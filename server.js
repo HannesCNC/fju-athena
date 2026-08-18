@@ -41,6 +41,7 @@ function score(item, question){
   if(item.status === 'superseded') s -= 2.5;
   return s;
 }
+const OFFICIAL_SOURCE_TYPES = new Set(['official_fju','course_material','lecture_notes']); // staff/admin-authored
 function retrieve(question){
   const all = loadKB().map(x=>({...x,_score:score(x,question)}));
   // A superseded entry must never outrank, or sit alongside, a current entry on
@@ -50,8 +51,15 @@ function retrieve(question){
   // answer. Only when nothing current matches at all do they surface, purely
   // as historical fallback.
   const current = all.filter(x=>x.status!=='superseded' && x._score>1).sort((a,b)=>b._score-a._score);
-  if(current.length) return current.slice(0,8);
-  return all.filter(x=>x.status==='superseded' && x._score>1).sort((a,b)=>b._score-a._score).slice(0,8);
+  if(!current.length) return all.filter(x=>x.status==='superseded' && x._score>1).sort((a,b)=>b._score-a._score).slice(0,8);
+  // Staff/admin-authored guidance must win outright, not just rank higher.
+  // If any official-tier source matches the question at all, unverified
+  // student reports are excluded from the answer entirely rather than shown
+  // alongside official guidance (even labeled "unconfirmed," including them
+  // invites the model to hedge/blend instead of just answering). Student
+  // reports only ever surface when there is no official-tier coverage at all.
+  const official = current.filter(x=>OFFICIAL_SOURCE_TYPES.has(x.source_type));
+  return (official.length ? official : current).slice(0,8);
 }
 function admin(req,res,next){ if(!process.env.ATHENA_ADMIN_KEY) return res.status(503).json({error:'ATHENA_ADMIN_KEY is not configured.'}); if(req.get('X-Admin-Key')!==process.env.ATHENA_ADMIN_KEY) return res.status(401).json({error:'Invalid admin key.'}); next(); }
 
