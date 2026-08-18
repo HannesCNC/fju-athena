@@ -5,7 +5,7 @@ const path = require('path');
 const OpenAI = require('openai');
 
 const app = express();
-app.use(express.json({ limit: '1mb' }));
+app.use(express.json({ limit: '5mb' }));
 const allowed = (process.env.ALLOWED_ORIGINS || 'https://richlab.online,https://www.richlab.online,http://localhost:8000').split(',').map(s=>s.trim());
 app.use(cors({ origin(origin, cb){ if(!origin || allowed.includes(origin)) return cb(null,true); return cb(new Error('Origin not allowed')); } }));
 
@@ -43,6 +43,44 @@ app.post('/api/athena/knowledge', admin, (req,res)=>{
   const authority={official_fju:100,course_material:90,lecture_notes:80,student_whatsapp:35,other:40}[b.source_type]||40;
   const item={id:'k-'+Date.now(),title:String(b.title).slice(0,180),source_type:b.source_type||'other',authority,date:b.date,valid_until:b.valid_until||null,audience:b.audience||'students',keywords:Array.isArray(b.keywords)?b.keywords.slice(0,30):[],content:String(b.content).slice(0,8000)};
   const items=loadKB(); items.push(item); saveKB(items); res.json({ok:true,item});
+});
+
+// Draft (but do NOT save) candidate knowledge entries from a raw pasted WhatsApp
+// chat export. Admin reviews/edits the drafts client-side and publishes the ones
+// they want via the existing POST /api/athena/knowledge above. Names, phone
+// numbers and other identifying details are instructed to be stripped by the
+// model; nothing here is written to the knowledge base automatically.
+app.post('/api/athena/draft-from-chat', admin, async (req,res)=>{
+  try{
+    const raw = String(req.body?.text||'').slice(0, 60000);
+    if(!raw.trim()) return res.status(400).json({error:'Paste or upload the exported chat text first.'});
+    const prompt = `You are helping an FJU course admin turn a raw WhatsApp group chat export into a small number of short, useful knowledge base entries for other students.
+
+Rules:
+- Only include information that is genuinely useful for other students (deadlines, platform issues, clarifications, tips). Ignore greetings, small talk, and anything not useful.
+- Never include any student's name, phone number, or other personal identifying detail in the output. Refer to people generically ("a student", "several students") if needed.
+- Merge duplicate or related messages about the same topic into one entry.
+- For each entry produce: title (short), date (YYYY-MM-DD, your best guess from the chat, or the most recent relevant date mentioned), keywords (3-8 short lowercase terms), content (2-4 plain-English sentences, no names or numbers).
+- Return STRICT JSON only: an array of objects with exactly these fields: title, date, keywords (array of strings), content. No other text, no markdown code fences.
+- If there is nothing useful in the text, return [].
+
+CHAT EXPORT:
+${raw}`;
+    const response = await client.responses.create({ model: MODEL, input: prompt });
+    let text = (response.output_text || '').trim();
+    text = text.replace(/^```(json)?/i, '').replace(/```$/, '').trim();
+    let items;
+    try { items = JSON.parse(text); } catch (e) { return res.status(502).json({ error: 'Could not draft entries from that text. Try a shorter excerpt.' }); }
+    if (!Array.isArray(items)) items = [];
+    items = items.slice(0, 25).map(it => ({
+      title: String(it.title || '').slice(0, 180),
+      date: String(it.date || '').slice(0, 10),
+      source_type: 'student_whatsapp',
+      keywords: Array.isArray(it.keywords) ? it.keywords.slice(0, 10).map(k => String(k).slice(0, 40)) : [],
+      content: String(it.content || '').slice(0, 1200)
+    })).filter(it => it.title && it.content);
+    res.json({ items });
+  } catch (err) { console.error(err); res.status(500).json({ error: 'Could not draft entries right now.' }); }
 });
 
 const port=process.env.PORT||3000; app.listen(port,()=>console.log(`FJU Athena listening on ${port}`));
