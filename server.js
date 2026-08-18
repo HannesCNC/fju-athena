@@ -41,7 +41,18 @@ function score(item, question){
   if(item.status === 'superseded') s -= 2.5;
   return s;
 }
-function retrieve(question){ return loadKB().map(x=>({...x,_score:score(x,question)})).sort((a,b)=>b._score-a._score).filter(x=>x._score>1).slice(0,8); }
+function retrieve(question){
+  const all = loadKB().map(x=>({...x,_score:score(x,question)}));
+  // A superseded entry must never outrank, or sit alongside, a current entry on
+  // the same topic — even if it happens to match the question's wording more
+  // closely (e.g. its title is close to what was typed). If anything current
+  // matches well enough, superseded entries are excluded entirely from this
+  // answer. Only when nothing current matches at all do they surface, purely
+  // as historical fallback.
+  const current = all.filter(x=>x.status!=='superseded' && x._score>1).sort((a,b)=>b._score-a._score);
+  if(current.length) return current.slice(0,8);
+  return all.filter(x=>x.status==='superseded' && x._score>1).sort((a,b)=>b._score-a._score).slice(0,8);
+}
 function admin(req,res,next){ if(!process.env.ATHENA_ADMIN_KEY) return res.status(503).json({error:'ATHENA_ADMIN_KEY is not configured.'}); if(req.get('X-Admin-Key')!==process.env.ATHENA_ADMIN_KEY) return res.status(401).json({error:'Invalid admin key.'}); next(); }
 
 const NO_ANSWER_MESSAGE = "That's a valid question, but I don't have a reliable answer for that in my current FJU information. I can forward it to the appropriate FJU staff member for attention.";
