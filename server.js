@@ -117,6 +117,28 @@ app.post('/api/athena/knowledge', admin, (req,res)=>{
   res.json({ok:true,item,superseded:supersededCount});
 });
 
+// Direct one-click way to retire a single entry, independent of adding a new
+// one. Simpler and less error-prone than remembering to tick "supersedes"
+// while filling in the add-knowledge form.
+app.post('/api/athena/knowledge/:id/supersede', admin, (req,res)=>{
+  const items=loadKB();
+  const it=items.find(x=>x.id===req.params.id);
+  if(!it) return res.status(404).json({error:'Entry not found.'});
+  it.status='superseded';
+  saveKB(items);
+  res.json({ok:true,item:it});
+});
+
+// Undo, in case the wrong entry gets marked by mistake.
+app.post('/api/athena/knowledge/:id/restore', admin, (req,res)=>{
+  const items=loadKB();
+  const it=items.find(x=>x.id===req.params.id);
+  if(!it) return res.status(404).json({error:'Entry not found.'});
+  it.status='current';
+  saveKB(items);
+  res.json({ok:true,item:it});
+});
+
 // Draft (but do NOT save) candidate knowledge entries from a raw pasted WhatsApp
 // chat export. Admin reviews/edits the drafts client-side and publishes the ones
 // they want via the existing POST /api/athena/knowledge above. Names, phone
